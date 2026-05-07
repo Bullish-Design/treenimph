@@ -124,3 +124,22 @@ suite "Summary":
     check s.contains("Grammar: demo (2 rules)")
     check s.contains("  source")
     check s.contains("  _expr")
+
+suite "Expr stringify":
+  test "leaf nodes":
+    check $Ref("x") == "Ref(\"x\")"
+    check $Text("hi") == "Text(\"hi\")"
+    check $Regex("[0-9]+") == "Regex(\"[0-9]+\")"
+    check $Blank() == "Blank()"
+
+  test "wrapper nodes":
+    check $Optional(Text("x")) == "Optional(Text(\"x\"))"
+    check $ZeroOrMore(Ref("a")) == "ZeroOrMore(Ref(\"a\"))"
+
+  test "compound nodes":
+    let e = Sequence(Text("a"), Ref("b"))
+    check $e == "Sequence(Text(\"a\"), Ref(\"b\"))"
+
+  test "nil expression":
+    let e: Expr = nil
+    check $e == "<nil>"

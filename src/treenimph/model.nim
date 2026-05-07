@@ -214,6 +214,45 @@ proc canonicalName*(r: Rule): string =
   else:
     r.name
 
+proc `$`*(e: Expr): string =
+  if e == nil:
+    return "<nil>"
+  case e.kind
+  of ekRef:
+    "Ref(\"" & e.refName & "\")"
+  of ekText:
+    "Text(\"" & e.textValue & "\")"
+  of ekRegex:
+    "Regex(\"" & e.regexPattern & "\")"
+  of ekBlank:
+    "Blank()"
+  of ekSequence:
+    var parts: seq[string] = @[]
+    for item in e.items:
+      parts.add $item
+    "Sequence(" & parts.join(", ") & ")"
+  of ekChoice:
+    var parts: seq[string] = @[]
+    for item in e.items:
+      parts.add $item
+    "Choice(" & parts.join(", ") & ")"
+  of ekOptional:
+    "Optional(" & $e.item & ")"
+  of ekZeroOrMore:
+    "ZeroOrMore(" & $e.item & ")"
+  of ekOneOrMore:
+    "OneOrMore(" & $e.item & ")"
+  of ekField:
+    "Field(\"" & e.fieldName & "\", " & $e.fieldExpr & ")"
+  of ekAlias:
+    "Alias(\"" & e.aliasName & "\", " & $e.aliasExpr & ", named=" & $e.aliasNamed & ")"
+  of ekToken:
+    "Token(" & $e.tokenExpr & ")"
+  of ekImmediateToken:
+    "ImmediateToken(" & $e.tokenExpr & ")"
+  of ekPrecedence:
+    "Prec(" & $e.precLevel & ", " & $e.precExpr & ", " & $e.precAssoc & ")"
+
 proc summary*(g: Grammar): string =
   result = "Grammar: " & g.name & " (" & $g.rules.len & " rules)\n"
 

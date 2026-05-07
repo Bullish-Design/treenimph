@@ -49,7 +49,7 @@ proc renderPackageJson*(g: Grammar): string =
   }
   pretty(j, indent = 2) & "\n"
 
-proc renderTreeSitterJson*(g: Grammar, queryFiles: Option[QueryFiles] = none(QueryFiles), writeQueryStubs = true): string =
+proc renderTreeSitterJson*(g: Grammar, writeQueryStubs = true): string =
   var grammarEntry = %*{
     "name": g.name,
     "scope": "source." & g.name,
@@ -58,7 +58,7 @@ proc renderTreeSitterJson*(g: Grammar, queryFiles: Option[QueryFiles] = none(Que
 
   grammarEntry["file-types"] = newJArray()
 
-  let qf = if queryFiles.isSome: queryFiles.get else: QueryFiles()
+  let qf = if g.queryFiles.isSome: g.queryFiles.get else: QueryFiles()
 
   if qf.highlights.isSome or writeQueryStubs:
     grammarEntry["highlights"] = %"queries/highlights.scm"

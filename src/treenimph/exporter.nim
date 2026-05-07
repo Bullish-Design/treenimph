@@ -75,7 +75,7 @@ proc exportGrammar*(g: Grammar, config: ExportConfig) =
     proc(): bool = isTreeNimphPackageJson(packageJsonPath, g.name))
 
   let writeStubs = config.writeQueryStubs
-  let treeSitterJsonContent = g.renderTreeSitterJson(g.queryFiles, writeStubs)
+  let treeSitterJsonContent = g.renderTreeSitterJson(writeStubs)
   let treeSitterJsonPath = outDir / "tree-sitter.json"
   safeWrite(treeSitterJsonPath, treeSitterJsonContent, config.overwrite,
     proc(): bool = isTreeNimphTreeSitterJson(treeSitterJsonPath, g.name))

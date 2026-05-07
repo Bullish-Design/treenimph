@@ -10,4 +10,4 @@ requires "nim >= 2.0.0"
 task test, "Run all tests":
   for f in listFiles("tests"):
     if f.endsWith(".nim"):
-      exec "nim r " & f
+      exec "nim r -p:src " & f

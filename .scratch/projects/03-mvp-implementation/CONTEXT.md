@@ -1,8 +1,10 @@
 # CONTEXT
 
-Project setup complete:
-- Created Nim package structure (`src`, `tests`, `examples`, snapshots)
-- Added `treenimph.nimble` with test task and build target
-- Verified `devenv shell -- nimble build` succeeds
+Completed Phase 1 (`model.nim`) with constructors, accessors, canonical naming, and summary.
+`tests/test_model.nim` now covers model construction and behavior; test run passes.
 
-Next: implement Phase 1 (`model.nim`) and replace placeholder tests with real model tests.
+Notable API deviations from guide due Nim constraints:
+- `mkRule`, `mkGrammar`, `mkExportConfig` helper names
+- `mkGrammar` uses `openArray[Rule]` and call style `rules = [...]`
+
+Next: implement Phase 2 diagnostics and its tests.

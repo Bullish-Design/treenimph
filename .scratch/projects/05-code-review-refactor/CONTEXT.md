@@ -1,9 +1,12 @@
 # Context
 
-Implemented Step 1 from the refactor guide: removed `bin = @["treenimph"]` from `treenimph.nimble`.
+Completed Step 2 in `src/treenimph/exporter.nim`:
+- `isTreeNimphPackageJson`: `except CatchableError`
+- `isTreeNimphTreeSitterJson`: `except CatchableError`
 
 Verification run:
-- `devenv shell -- nim r -p:src tests/test_model.nim` passed
+- `devenv shell -- nim check -p:src src/treenimph/exporter.nim` passed
 - `devenv shell -- nim r -p:src tests/test_export.nim` passed
+- bare `except:` check returned no matches
 
-Next: Step 2 (`src/treenimph/exporter.nim`) replace bare `except:` with `except CatchableError:`, verify with `nim check` and exporter tests, then commit/push.
+Next: Step 3, add nil guard/import in `render_js` and add nil-body test in `tests/test_render_js.nim`.

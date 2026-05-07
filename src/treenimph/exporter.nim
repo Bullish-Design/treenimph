@@ -22,7 +22,7 @@ proc isTreeNimphPackageJson(path: string, grammarName: string): bool =
   try:
     let j = parseJson(readFile(path))
     j["name"].getStr() == "tree-sitter-" & grammarName
-  except:
+  except CatchableError:
     false
 
 proc isTreeNimphTreeSitterJson(path: string, grammarName: string): bool =
@@ -31,7 +31,7 @@ proc isTreeNimphTreeSitterJson(path: string, grammarName: string): bool =
   try:
     let j = parseJson(readFile(path))
     j["grammars"][0]["name"].getStr() == grammarName
-  except:
+  except CatchableError:
     false
 
 proc safeWrite(path: string, content: string, canOverwrite: bool, ownershipCheck: proc(): bool) =

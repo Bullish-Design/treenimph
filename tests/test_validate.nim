@@ -125,3 +125,49 @@ suite "validateOrRaise":
   test "does not raise on valid grammar":
     let g = mkGrammar("demo", rules = [mkRule("source", Blank())])
     g.validateOrRaise()
+
+suite "Validate warnings":
+  test "single-item choice warns":
+    let g = mkGrammar("demo", rules = [mkRule("source", Choice(Ref("source")))])
+    let diags = g.validate()
+    var found = false
+    for d in diags:
+      if d.kind == dkWarning and d.message.contains("Choice with a single item"):
+        found = true
+    check found
+
+  test "single-item sequence warns":
+    let g = mkGrammar("demo", rules = [mkRule("source", Sequence(Text("x")))])
+    let diags = g.validate()
+    var found = false
+    for d in diags:
+      if d.kind == dkWarning and d.message.contains("Sequence with a single item"):
+        found = true
+    check found
+
+  test "unreferenced rule warns":
+    let g = mkGrammar("demo", rules = [
+      mkRule("source", Text("x")),
+      mkRule("orphan", Text("y")),
+    ])
+    let diags = g.validate()
+    var found = false
+    for d in diags:
+      if d.kind == dkWarning and d.message.contains("never referenced"):
+        found = true
+    check found
+
+  test "first rule (entry point) does not warn even if unreferenced":
+    let g = mkGrammar("demo", rules = [
+      mkRule("source", Text("x")),
+    ])
+    let diags = g.validate()
+    for d in diags:
+      check not d.message.contains("never referenced")
+
+  test "warnings do not cause validateOrRaise to raise":
+    let g = mkGrammar("demo", rules = [
+      mkRule("source", Choice(Text("x"))),
+      mkRule("orphan", Text("y")),
+    ])
+    g.validateOrRaise()

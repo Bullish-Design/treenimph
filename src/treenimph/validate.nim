@@ -113,6 +113,12 @@ proc validateExprTree(
         ruleName = some(ruleName),
         hint = some("In rule \"" & ruleName & "\""),
       )
+    elif e.items.len == 1:
+      diags.add warning(
+        "Sequence with a single item is redundant",
+        ruleName = some(ruleName),
+        hint = some("In rule \"" & ruleName & "\": use the item directly instead of wrapping in Sequence()"),
+      )
     for i, item in e.items:
       if item == nil:
         diags.add error(
@@ -126,6 +132,12 @@ proc validateExprTree(
         "Choice must contain at least one item",
         ruleName = some(ruleName),
         hint = some("In rule \"" & ruleName & "\""),
+      )
+    elif e.items.len == 1:
+      diags.add warning(
+        "Choice with a single item is redundant",
+        ruleName = some(ruleName),
+        hint = some("In rule \"" & ruleName & "\": use the item directly instead of wrapping in Choice()"),
       )
     for i, item in e.items:
       if item == nil:
@@ -238,6 +250,31 @@ proc validateGrammarConfig(
     if not fileExists(path):
       diags.add error("Scanner file \"" & path & "\" does not exist")
 
+proc collectReferencedNames(e: Expr, refs: var HashSet[string]) =
+  if e == nil:
+    return
+  if e.kind == ekRef:
+    refs.incl e.refName
+  for child in e.children:
+    collectReferencedNames(child, refs)
+
+proc warnUnreferencedRules(g: Grammar, diags: var seq[Diagnostic]) =
+  var referencedNames: HashSet[string]
+  for rule in g.rules:
+    collectReferencedNames(rule.body, referencedNames)
+  for e in g.extras:
+    collectReferencedNames(e, referencedNames)
+  for e in g.externals:
+    collectReferencedNames(e, referencedNames)
+  for i in 1..<g.rules.len:
+    let cname = g.rules[i].canonicalName
+    if cname notin referencedNames:
+      diags.add warning(
+        "Rule \"" & cname & "\" is never referenced by any other rule",
+        ruleName = some(cname),
+        hint = some("This may indicate dead code or a missing reference"),
+      )
+
 proc validate*(g: Grammar): seq[Diagnostic] =
   var diags: seq[Diagnostic] = @[]
 
@@ -257,6 +294,7 @@ proc validate*(g: Grammar): seq[Diagnostic] =
       validateExprTree(rule.body, rule.canonicalName, validRefs, ruleNameList, diags)
 
   validateGrammarConfig(g, ruleNames, ruleNameList, diags)
+  warnUnreferencedRules(g, diags)
 
   diags
 

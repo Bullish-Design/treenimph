@@ -1,10 +1,9 @@
 # CONTEXT
 
-Completed Phase 1 (`model.nim`) with constructors, accessors, canonical naming, and summary.
-`tests/test_model.nim` now covers model construction and behavior; test run passes.
+Completed Phase 2 diagnostics module:
+- Implemented diagnostic types, formatting, constructors.
+- Implemented Levenshtein distance and closest-match helper.
+- Implemented `ValidationError`, `ExportError`, and `newValidationError`.
+- Added and passed `tests/test_diagnostics.nim`.
 
-Notable API deviations from guide due Nim constraints:
-- `mkRule`, `mkGrammar`, `mkExportConfig` helper names
-- `mkGrammar` uses `openArray[Rule]` and call style `rules = [...]`
-
-Next: implement Phase 2 diagnostics and its tests.
+Next: implement Phase 3 validation (`validate.nim`) and validation test suite.

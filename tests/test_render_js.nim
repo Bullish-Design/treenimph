@@ -1,4 +1,4 @@
-import std/[strutils]
+import std/[options, strutils]
 import unittest
 
 import treenimph/[model, render_js]
@@ -43,3 +43,11 @@ suite "render_js":
     let output = g.renderGrammarJs()
     let expected = readFile("tests/snapshots/json_like_grammar.js")
     check output == expected
+
+  test "raises on nil rule body":
+    let g = Grammar(
+      name: "broken",
+      rules: @[Rule(name: "source", body: nil, hidden: false)],
+    )
+    expect AssertionDefect:
+      discard g.renderGrammarJs()

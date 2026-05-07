@@ -3,7 +3,7 @@ import std/[options, sequtils, strutils]
 import ./diagnostics
 import ./model
 
-proc escapeJsSingleQuote(s: string): string =
+proc escapeJsSingleQuote*(s: string): string =
   result = ""
   for c in s:
     case c
@@ -17,10 +17,16 @@ proc escapeJsSingleQuote(s: string): string =
       result.add "\\r"
     of '\t':
       result.add "\\t"
+    of '\0':
+      result.add "\\0"
+    of '\x01'..'\x08', '\x0B', '\x0C', '\x0E'..'\x1F':
+      result.add "\\x"
+      result.add "0123456789abcdef"[ord(c) shr 4]
+      result.add "0123456789abcdef"[ord(c) and 0xF]
     else:
       result.add c
 
-proc escapeRegexSlash(pattern: string): string =
+proc escapeRegexSlash*(pattern: string): string =
   result = ""
   var i = 0
   while i < pattern.len:

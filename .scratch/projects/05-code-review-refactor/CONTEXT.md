@@ -1,13 +1,12 @@
 # Context
 
-Completed Step 3:
-- Added nil-body assertions at start of `renderGrammarJs`.
-- Added `raises on nil rule body` test in `tests/test_render_js.nim`.
+Completed Step 4:
+- `escapeJsSingleQuote` now exported and escapes null/control chars (`\\0`, `\\xNN`).
+- `escapeRegexSlash` now exported.
+- Added `escapeJsSingleQuote` and `escapeRegexSlash` test suites to `tests/test_render_js.nim`.
 
 Verification run:
 - `devenv shell -- nim check -p:src src/treenimph/render_js.nim` passed
-- `devenv shell -- nim r -p:src tests/test_render_js.nim` passed (4 tests)
-- `devenv shell -- nim r -p:src tests/test_export.nim` passed
-- `devenv shell -- nim r -p:src tests/test_examples.nim` passed
+- `devenv shell -- nim r -p:src tests/test_render_js.nim` passed (16 tests total at this point)
 
-Next: Step 4 (expand JS escaping + export helper procs + add escape-focused tests).
+Next: Step 5 (escape grammar name in `renderGrammarJs`), then run render/export/examples checks.

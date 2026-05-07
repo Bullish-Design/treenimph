@@ -51,3 +51,43 @@ suite "render_js":
     )
     expect AssertionDefect:
       discard g.renderGrammarJs()
+
+suite "escapeJsSingleQuote":
+  test "passes through normal text":
+    check escapeJsSingleQuote("hello world") == "hello world"
+
+  test "escapes backslash":
+    check escapeJsSingleQuote("a\\b") == "a\\\\b"
+
+  test "escapes single quote":
+    check escapeJsSingleQuote("it's") == "it\\'s"
+
+  test "escapes newline and carriage return":
+    check escapeJsSingleQuote("a\nb\rc") == "a\\nb\\rc"
+
+  test "escapes tab":
+    check escapeJsSingleQuote("a\tb") == "a\\tb"
+
+  test "escapes null byte":
+    check escapeJsSingleQuote("a\0b") == "a\\0b"
+
+  test "escapes control characters as hex":
+    check escapeJsSingleQuote("\x01") == "\\x01"
+    check escapeJsSingleQuote("\x1F") == "\\x1f"
+    check escapeJsSingleQuote("\x0B") == "\\x0b"
+
+  test "combined escaping":
+    check escapeJsSingleQuote("it's\na \\test\0") == "it\\'s\\na \\\\test\\0"
+
+suite "escapeRegexSlash":
+  test "passes through normal pattern":
+    check escapeRegexSlash("[a-z]+") == "[a-z]+"
+
+  test "escapes forward slash":
+    check escapeRegexSlash("a/b") == "a\\/b"
+
+  test "preserves existing backslash escapes":
+    check escapeRegexSlash("\\d+") == "\\d+"
+
+  test "escapes slash but preserves backslash-slash":
+    check escapeRegexSlash("a\\/b/c") == "a\\/b\\/c"

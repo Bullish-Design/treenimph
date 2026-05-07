@@ -14,5 +14,4 @@ let grammar = mkGrammar(
   ],
 )
 
-grammar.validateOrRaise()
-echo grammar.renderGrammarJs()
+run(grammar)

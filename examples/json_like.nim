@@ -21,6 +21,4 @@ let grammar = mkGrammar(
   ],
 )
 
-grammar.validateOrRaise()
-echo grammar.summary()
-echo grammar.renderGrammarJs()
+run(grammar)

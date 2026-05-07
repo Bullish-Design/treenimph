@@ -164,3 +164,145 @@ proc transformExpr(node: NimNode, letBound: HashSet[string]): NimNode =
 
   else:
     return node
+
+proc transformConfigValue(key: string, value: NimNode, letBound: HashSet[string]): NimNode =
+  case key
+  of "extras":
+    if value.kind == nnkBracket:
+      result = newNimNode(nnkBracket)
+      for child in value:
+        result.add transformExpr(child, letBound)
+      return result
+    else:
+      return transformExpr(value, letBound)
+
+  of "word":
+    if value.kind == nnkIdent:
+      return newCall(ident("some"), newStrLitNode(value.strVal))
+    else:
+      error("word must be a bare identifier (rule name)", value)
+
+  of "conflicts":
+    if value.kind != nnkBracket:
+      error("conflicts must be a bracket list of bracket lists", value)
+    result = newNimNode(nnkBracket)
+    for group in value:
+      if group.kind != nnkBracket:
+        error("Each conflict group must be a bracket list of identifiers", group)
+      var names = newNimNode(nnkPrefix)
+      names.add ident("@")
+      var bracketNode = newNimNode(nnkBracket)
+      for item in group:
+        if item.kind != nnkIdent:
+          error("Conflict entries must be bare identifiers (rule names)", item)
+        bracketNode.add newStrLitNode(item.strVal)
+      names.add bracketNode
+      result.add names
+    return result
+
+  of "supertypes", "inline":
+    if value.kind != nnkBracket:
+      error(key & " must be a bracket list of identifiers", value)
+    result = newNimNode(nnkBracket)
+    for item in value:
+      if item.kind != nnkIdent:
+        error(key & " entries must be bare identifiers (rule names)", item)
+      result.add newStrLitNode(item.strVal)
+    return result
+
+  of "externals":
+    if value.kind == nnkBracket:
+      result = newNimNode(nnkBracket)
+      for child in value:
+        result.add transformExpr(child, letBound)
+      return result
+    else:
+      return transformExpr(value, letBound)
+
+  of "scannerPath":
+    if value.kind in {nnkStrLit..nnkTripleStrLit}:
+      return newCall(ident("some"), value)
+    else:
+      error("scannerPath must be a string literal", value)
+
+  of "queryFiles":
+    return newCall(ident("some"), value)
+
+  else:
+    error("Unknown config key: " & key, value)
+    return value
+
+macro grammar*(name: string, body: untyped): untyped =
+  expectKind body, nnkStmtList
+
+  var letBound: HashSet[string]
+  var letSections: seq[NimNode]
+  var configArgs: seq[NimNode]
+  var ruleExprs: seq[NimNode]
+
+  for stmt in body:
+    case stmt.kind
+    of nnkLetSection:
+      var newLetSection = newNimNode(nnkLetSection)
+      for def in stmt:
+        expectKind def, nnkIdentDefs
+        let varName = def[0]
+        if varName.kind != nnkIdent:
+          error("let binding name must be a bare identifier", varName)
+        letBound.incl varName.strVal
+        let rhs = def[2]
+        let transformedRhs = transformExpr(rhs, letBound)
+        var newDef = newNimNode(nnkIdentDefs)
+        newDef.add varName
+        newDef.add def[1]
+        newDef.add transformedRhs
+        newLetSection.add newDef
+      letSections.add newLetSection
+
+    of nnkAsgn:
+      let lhs = stmt[0]
+      let rhs = stmt[1]
+      if lhs.kind != nnkIdent:
+        error("Left-hand side must be a bare identifier (rule name or config key)", lhs)
+      let lhsName = lhs.strVal
+      if isReservedConfigName(lhsName):
+        let configValue = transformConfigValue(lhsName, rhs, letBound)
+        configArgs.add newNimNode(nnkExprEqExpr).add(ident(lhsName), configValue)
+      else:
+        let ruleBody = transformExpr(rhs, letBound)
+        ruleExprs.add newCall(ident("mkRule"), newStrLitNode(lhsName), ruleBody)
+
+    of nnkCommentStmt:
+      discard
+
+    else:
+      error(
+        "Unexpected statement in grammar block. Expected: rule definition (name = expr), " &
+          "let binding, or config assignment. Got: " & $stmt.kind,
+        stmt,
+      )
+
+  if ruleExprs.len == 0:
+    error("Grammar must contain at least one rule definition", body)
+
+  var rulesArray = newNimNode(nnkBracket)
+  for r in ruleExprs:
+    rulesArray.add r
+
+  var grammarCall = newCall(ident("mkGrammar"), name)
+  grammarCall.add newNimNode(nnkExprEqExpr).add(ident("rules"), rulesArray)
+  for arg in configArgs:
+    grammarCall.add arg
+
+  result = newStmtList()
+  for letSec in letSections:
+    result.add letSec
+
+  var grammarLet = newNimNode(nnkLetSection)
+  var grammarDef = newNimNode(nnkIdentDefs)
+  grammarDef.add ident("grammar")
+  grammarDef.add newEmptyNode()
+  grammarDef.add grammarCall
+  grammarLet.add grammarDef
+  result.add grammarLet
+  result.add newCall(ident("run"), ident("grammar"))

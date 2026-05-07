@@ -1,0 +1,5 @@
+stack trace: (most recent call last)
+/home/andrew/Documents/Projects/treenimph/src/treenimph/dsl.nim(284, 37) grammar
+/home/andrew/Documents/Projects/treenimph/src/treenimph/dsl.nim(63, 14) transformExpr
+/home/andrew/Documents/Projects/treenimph/tests/fixtures/dsl_errors/cases/bad_field.nim(3, 1) template/generic instantiation of `grammar` from here
+/home/andrew/Documents/Projects/treenimph/tests/fixtures/dsl_errors/cases/bad_field.nim(4, 12) Error: Left side of @ must be a field name (bare identifier), got nnkStrLit

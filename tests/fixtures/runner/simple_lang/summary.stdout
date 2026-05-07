@@ -1,0 +1,16 @@
+Grammar: simple_lang (7 rules)
+Word: none
+Extras: 0 entries
+Conflicts: 0 entries
+Supertypes: none
+Inline: none
+Externals: 0 entries
+Rules:
+  source_file
+  statement
+  let_stmt
+  expr_stmt
+  expression
+  identifier
+  number
+

@@ -10,6 +10,7 @@
 - [x] Step 7: DSL unit tests
 - [x] Step 8: DSL integration tests
 - [x] Step 9: DSL equivalence tests
-- [ ] Step 10: Rewrite examples to DSL + raw copies
-- [ ] Step 11: DSL error tests
-- [ ] Step 12: Full validation and cleanup
+- [x] Step 10: Rewrite examples to DSL + raw copies
+- [x] Step 11: DSL error tests
+- [x] Step 12: Full validation and cleanup
+- [x] Fixture migration: on-disk test cases + snapshot outputs for runner/DSL integration/errors

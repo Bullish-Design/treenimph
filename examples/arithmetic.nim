@@ -1,17 +1,11 @@
-import treenimph
+import treenimph/dsl
 
-let grammar = mkGrammar(
-  "arithmetic",
-  rules = [
-    mkRule("expression", Choice(Ref("number"), Ref("binary_expression"), Ref("parenthesized_expression"))),
-    mkRule("binary_expression", PrecLeft(1, Sequence(
-      Field("left", Ref("expression")),
-      Field("operator", Choice(Text("+"), Text("-"), Text("*"), Text("/"))),
-      Field("right", Ref("expression")),
-    ))),
-    mkRule("parenthesized_expression", balanced("(", ")", Ref("expression"))),
-    mkRule("number", Regex("[0-9]+")),
-  ],
-)
-
-run(grammar)
+grammar "arithmetic":
+  expression = number | binary_expression | parenthesized_expression
+  binary_expression = prec_left(1, [
+    left@expression,
+    operator@("+" | "-" | "*" | "/"),
+    right@expression,
+  ])
+  parenthesized_expression = balanced("(", ")", expression)
+  number = re"[0-9]+"

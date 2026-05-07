@@ -1,0 +1,5 @@
+stack trace: (most recent call last)
+/home/andrew/Documents/Projects/treenimph/src/treenimph/dsl.nim(284, 37) grammar
+/home/andrew/Documents/Projects/treenimph/src/treenimph/dsl.nim(39, 12) transformExpr
+/home/andrew/Documents/Projects/treenimph/tests/fixtures/dsl_errors/cases/bad_sequence.nim(3, 1) template/generic instantiation of `grammar` from here
+/home/andrew/Documents/Projects/treenimph/tests/fixtures/dsl_errors/cases/bad_sequence.nim(4, 12) Error: Empty brackets [] are not allowed — a sequence must have at least one item

@@ -1,24 +1,18 @@
-import treenimph
+import treenimph/dsl
 
-let
-  value = Ref("_value")
-  comma = Text(",")
+grammar "json":
+  extras = [re"\\s+"]
 
-let grammar = mkGrammar(
-  "json",
-  extras = [Regex("\\s+")],
-  rules = [
-    mkRule("document", value),
-    mkRule("_value", Choice(Ref("object"), Ref("array"), Ref("string"), Ref("number"), Ref("true"), Ref("false"), Ref("null"))),
-    mkRule("object", Sequence(Text("{"), Optional(delimitedList(Ref("pair"), comma, trailing = true)), Text("}"))),
-    mkRule("pair", Sequence(Field("key", Ref("string")), Text(":"), Field("value", value))),
-    mkRule("array", Sequence(Text("["), Optional(delimitedList(value, comma, trailing = true)), Text("]"))),
-    mkRule("string", Regex("\"[^\"]*\"")),
-    mkRule("number", Regex("-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?")),
-    mkRule("true", Text("true")),
-    mkRule("false", Text("false")),
-    mkRule("null", Text("null")),
-  ],
-)
+  let value = value_node
+  let comma = ","
 
-run(grammar)
+  document = value
+  value_node = json_object | array | string_rule | number_rule | true_lit | false_lit | null_lit
+  json_object = ["{", ?delimitedList(pair, comma, trailing = true), "}"]
+  pair = [key@string_rule, ":", val@value]
+  array = ["[", ?delimitedList(value, comma, trailing = true), "]"]
+  string_rule = re"[a-zA-Z_]+"
+  number_rule = re"-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"
+  true_lit = "true"
+  false_lit = "false"
+  null_lit = "null"

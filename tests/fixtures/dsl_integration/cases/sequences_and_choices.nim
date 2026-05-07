@@ -1,7 +1,7 @@
 import treenimph/dsl
 
-grammar "simple_lang":
-  source_file = *statement
+grammar "test_lang":
+  source = *statement
   statement = let_stmt | expr_stmt
   let_stmt = ["let", name@identifier, "=", value@expression, ";"]
   expr_stmt = [expression, ";"]

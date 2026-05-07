@@ -1,0 +1,4 @@
+stack trace: (most recent call last)
+/home/andrew/Documents/Projects/treenimph/src/treenimph/dsl.nim(291, 12) grammar
+/home/andrew/Documents/Projects/treenimph/tests/fixtures/dsl_errors/cases/empty_grammar.nim(3, 1) template/generic instantiation of `grammar` from here
+/home/andrew/Documents/Projects/treenimph/tests/fixtures/dsl_errors/cases/empty_grammar.nim(4, 3) Error: Unexpected statement in grammar block. Expected: rule definition (name = expr), let binding, or config assignment. Got: nnkDiscardStmt

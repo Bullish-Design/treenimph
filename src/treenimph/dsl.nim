@@ -18,7 +18,9 @@ proc transformExpr(node: NimNode, letBound: HashSet[string]): NimNode =
 
   of nnkIdent, nnkSym:
     let name = node.strVal
-    if name in letBound:
+    if name in ["true", "false"]:
+      return node
+    elif name in letBound:
       return node
     else:
       return newCall(ident("Ref"), newStrLitNode(name))
@@ -132,6 +134,16 @@ proc transformExpr(node: NimNode, letBound: HashSet[string]): NimNode =
       result = newCall(ident("Alias"), aliasName, aliasExpr)
       for i in 3 ..< node.len:
         result.add node[i]
+      return result
+
+    of "balanced":
+      if node.len < 4:
+        error("balanced() requires 3 arguments: balanced(open, close, content)", node)
+      result = newNimNode(nnkCall)
+      result.add node[0]
+      result.add node[1]
+      result.add node[2]
+      result.add transformExpr(node[3], letBound)
       return result
 
     else:

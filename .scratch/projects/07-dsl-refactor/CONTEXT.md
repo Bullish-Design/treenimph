@@ -1,11 +1,13 @@
 # CONTEXT
 
-Completed Step 6 from `DSL_IMPLEMENTATION_GUIDE.md`.
+Completed Step 7 from `DSL_IMPLEMENTATION_GUIDE.md`.
 
-- Extended `src/treenimph/dsl.nim` with:
-  - `transformConfigValue`
-  - `grammar` macro (builds grammar and dispatches via `run(grammar)`)
+- Added `tests/test_dsl.nim` comprehensive DSL transformation/config tests.
+- Added needed imports and adjusted underscore-specific cases to valid Nim identifiers.
+- Fixed DSL transformation logic uncovered by tests:
+  - preserve boolean identifiers (`true`/`false`) as literals
+  - special-case `balanced(open, close, content)` to keep delimiters as strings
 - Verified with:
-  - `devenv shell -- nim check -p:src src/treenimph/dsl.nim`
-  - smoke run from `tests/smoke_dsl.nim` (created and removed per guide)
-- Next action: Step 7 add `tests/test_dsl.nim` unit tests.
+  - `devenv shell -- nim r -p:src tests/test_dsl.nim`
+  - `devenv shell -- nimble test`
+- Next action: Step 8 add `tests/test_dsl_integration.nim`.

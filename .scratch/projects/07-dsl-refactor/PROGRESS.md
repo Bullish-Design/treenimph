@@ -8,7 +8,7 @@
 - [x] Step 5: DSL scaffold + transformExpr
 - [x] Step 6: grammar macro
 - [x] Step 7: DSL unit tests
-- [ ] Step 8: DSL integration tests
+- [x] Step 8: DSL integration tests
 - [ ] Step 9: DSL equivalence tests
 - [ ] Step 10: Rewrite examples to DSL + raw copies
 - [ ] Step 11: DSL error tests

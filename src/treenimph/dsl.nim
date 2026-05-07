@@ -1,4 +1,4 @@
-import std/[macros, sets, strutils]
+import std/[macros, options, sets]
 
 import ../treenimph
 export treenimph
@@ -190,7 +190,7 @@ proc transformConfigValue(key: string, value: NimNode, letBound: HashSet[string]
 
   of "word":
     if value.kind == nnkIdent:
-      return newCall(ident("some"), newStrLitNode(value.strVal))
+      return newCall(bindSym("some"), newStrLitNode(value.strVal))
     else:
       error("word must be a bare identifier (rule name)", value)
 
@@ -233,12 +233,12 @@ proc transformConfigValue(key: string, value: NimNode, letBound: HashSet[string]
 
   of "scannerPath":
     if value.kind in {nnkStrLit..nnkTripleStrLit}:
-      return newCall(ident("some"), value)
+      return newCall(bindSym("some"), value)
     else:
       error("scannerPath must be a string literal", value)
 
   of "queryFiles":
-    return newCall(ident("some"), value)
+    return newCall(bindSym("some"), value)
 
   else:
     error("Unknown config key: " & key, value)

@@ -52,6 +52,37 @@ suite "render_js":
     expect AssertionDefect:
       discard g.renderGrammarJs()
 
+  test "renders all grammar config sections":
+    let g = mkGrammar(
+      "full_config",
+      rules = [
+        mkRule("source", Ref("expr")),
+        mkRule("expr", Choice(Ref("number"), Ref("identifier"))),
+        mkRule("number", Regex("[0-9]+")),
+        mkRule("identifier", Regex("[a-zA-Z_]+")),
+        mkRule("_helper", Blank()),
+      ],
+      word = some("identifier"),
+      extras = [Regex("\\s+"), Ref("_helper")],
+      supertypes = ["expr"],
+      inline = ["_helper"],
+      conflicts = [@["expr", "number"]],
+      externals = [Ref("ext_token")],
+    )
+    let output = g.renderGrammarJs()
+    check output.contains("word: $ => $.identifier")
+    check output.contains("extras: $ => [")
+    check output.contains("/\\s+/")
+    check output.contains("supertypes: $ => [")
+    check output.contains("$.expr")
+    check output.contains("inline: $ => [")
+    check output.contains("$._helper")
+    check output.contains("conflicts: $ => [")
+    check output.contains("[$.expr, $.number]")
+    check output.contains("externals: $ => [")
+    check output.contains("$.ext_token")
+    check output.contains("_helper: $ =>")
+
 suite "escapeJsSingleQuote":
   test "passes through normal text":
     check escapeJsSingleQuote("hello world") == "hello world"

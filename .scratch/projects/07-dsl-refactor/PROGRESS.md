@@ -4,7 +4,7 @@
 - [x] Step 1: Runner module
 - [x] Step 2: Wire runner into root
 - [x] Step 3: Update examples to run()
-- [ ] Step 4: Runner tests
+- [x] Step 4: Runner tests
 - [ ] Step 5: DSL scaffold + transformExpr
 - [ ] Step 6: grammar macro
 - [ ] Step 7: DSL unit tests

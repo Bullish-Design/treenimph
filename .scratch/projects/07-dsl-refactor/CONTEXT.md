@@ -1,14 +1,9 @@
 # CONTEXT
 
-Completed Step 3 from `DSL_IMPLEMENTATION_GUIDE.md`.
+Completed Step 4 from `DSL_IMPLEMENTATION_GUIDE.md`.
 
-- Updated examples to use `run(grammar)`:
-  - `examples/simple_lang.nim`
-  - `examples/arithmetic.nim`
-  - `examples/json_like.nim`
-- Verified all three run and emit grammar output.
-- Verified CLI flags on simple example:
-  - `--summary` prints grammar summary
-  - `--validate` prints valid message
-- Regression check passed: `devenv shell -- nimble test`.
-- Next action: Step 4 add `tests/test_runner.nim`.
+- Added `tests/test_runner.nim` subprocess tests for default/summary/validate/export actions.
+- Verified with:
+  - `devenv shell -- nim r -p:src tests/test_runner.nim`
+  - `devenv shell -- nimble test`
+- Next action: Step 5 create `src/treenimph/dsl.nim` scaffold and `transformExpr`.

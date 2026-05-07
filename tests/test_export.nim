@@ -36,3 +36,27 @@ suite "exporter":
     g.exportGrammar(mkExportConfig(outDir))
     g.exportGrammar(mkExportConfig(outDir, overwrite = true))
     check fileExists(outDir / "grammar.js")
+
+  test "export with overwrite=false raises on existing files":
+    let tmpDir = createTempDir("treenimph_test_", "")
+    defer: removeDir(tmpDir)
+
+    let outDir = tmpDir / "output"
+    let g = mkGrammar("test", rules = [mkRule("source", Blank())])
+    g.exportGrammar(mkExportConfig(outDir))
+    check fileExists(outDir / "grammar.js")
+    expect ExportError:
+      g.exportGrammar(mkExportConfig(outDir, overwrite = false))
+
+  test "export refuses to overwrite non-TreeNimph files":
+    let tmpDir = createTempDir("treenimph_test_", "")
+    defer: removeDir(tmpDir)
+
+    let outDir = tmpDir / "output"
+    let g = mkGrammar("test", rules = [mkRule("source", Blank())])
+    createDir(outDir)
+    createDir(outDir / "queries")
+    createDir(outDir / "src")
+    writeFile(outDir / "grammar.js", "// Written by hand, not TreeNimph\n")
+    expect ExportError:
+      g.exportGrammar(mkExportConfig(outDir, overwrite = true))

@@ -2,7 +2,7 @@
 
 - [x] Project directory and tracking files created.
 - [x] Step 1: Runner module
-- [ ] Step 2: Wire runner into root
+- [x] Step 2: Wire runner into root
 - [ ] Step 3: Update examples to run()
 - [ ] Step 4: Runner tests
 - [ ] Step 5: DSL scaffold + transformExpr

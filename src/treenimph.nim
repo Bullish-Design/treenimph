@@ -8,6 +8,7 @@ import treenimph/render_js
 import treenimph/render_package
 import treenimph/exporter
 import treenimph/helpers
+import treenimph/runner
 
 export model
 export diagnostics
@@ -16,3 +17,4 @@ export render_js
 export render_package
 export exporter
 export helpers
+export runner

@@ -1,3 +1,3 @@
 # Issues
 
-- None yet.
+- None.

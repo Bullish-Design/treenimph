@@ -1,12 +1,13 @@
 # Context
 
-Completed Step 4:
-- `escapeJsSingleQuote` now exported and escapes null/control chars (`\\0`, `\\xNN`).
-- `escapeRegexSlash` now exported.
-- Added `escapeJsSingleQuote` and `escapeRegexSlash` test suites to `tests/test_render_js.nim`.
+Project complete. Implemented all 14 steps from:
+- `.scratch/projects/04-mvp-code-review/CODE_REVIEW_REFACTOR_GUIDE.md`
 
-Verification run:
-- `devenv shell -- nim check -p:src src/treenimph/render_js.nim` passed
-- `devenv shell -- nim r -p:src tests/test_render_js.nim` passed (16 tests total at this point)
+Final verification completed:
+- `devenv shell -- nim r -p:src tests/test_render_js.nim`
+- `devenv shell -- bash -c 'for f in tests/test_*.nim; do nim r -p:src "$f"; done'`
+- Full suite result: `8 passed, 0 failed`
 
-Next: Step 5 (escape grammar name in `renderGrammarJs`), then run render/export/examples checks.
+Notes:
+- `src/treenimph/render_js.nim` still reports an existing warning: unused `import ./diagnostics`.
+- No blockers remain for the code-review refactor scope.

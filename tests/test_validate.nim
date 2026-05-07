@@ -65,6 +65,20 @@ suite "Validate expression refs":
     let diags = g.validate()
     check hasDiag(diags, "Choice must contain at least one item")
 
+  test "deeply nested invalid ref":
+    let g = mkGrammar("demo", rules = [
+      mkRule("source", Optional(Sequence(Field("x", Ref("missing"))))),
+    ])
+    let diags = g.validate()
+    check hasDiag(diags, "Unknown rule reference \"missing\"")
+
+  test "nested nil child in sequence":
+    let g = mkGrammar("demo", rules = [
+      mkRule("source", Optional(Sequence(Text("a"), nil, Text("b")))),
+    ])
+    let diags = g.validate()
+    check hasDiag(diags, "Sequence contains a nil item")
+
 suite "Validate config":
   test "invalid word":
     let g = mkGrammar(
